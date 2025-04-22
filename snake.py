@@ -2,11 +2,11 @@ import random
 import pygame
 
 class Snake():
-    def __init__(self, screen_size, move_delay=150, frame=60):
+    def __init__(self, move_delay=150, frame=60):
         pygame.init()
         pygame.display.set_caption('Snake')
 
-        self.screen_size = screen_size
+        self.screen_size = 600
         self.frame = frame
         self.running = True
         self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
@@ -17,6 +17,7 @@ class Snake():
         self.player_pos = pygame.Vector2(screen_width/2, screen_height/2)
         self.snake_head_pos = [int(self.player_pos.x), int(self.player_pos.y)]
         self.body = [self.snake_head_pos.copy()]
+        self.apple_pos = None
 
         self.move_interval = 20
 
@@ -25,7 +26,8 @@ class Snake():
 
         self.snake_direction = '' # current move direction
 
-        self.apple_pos = [100, 100]
+        self.generate_apple()
+
         self.score = 0
 
     def game_event(self):
@@ -136,22 +138,22 @@ class Snake():
             self.body.append([last_pos[0] - 20, last_pos[1]])
         self.write_pos(f"Ate an apple: {self.body}\n")
 
+    def generate_apple(self):
+        max_val = int(self.screen_size / 20)
+        ran_pos_x = random.randint(0, max_val) * 20
+        ran_pos_y = random.randint(0, max_val) * 20
+
+        if ran_pos_x == self.screen_size or ran_pos_y == self.screen_size:
+            self.apple_pos = [ran_pos_x-20, ran_pos_y-20]
+        else:
+            self.apple_pos = [ran_pos_x, ran_pos_y]
+
     # generate and apple and detect apple eaten
     def eat_apple(self):
         if tuple(self.snake_head_pos) == tuple(self.apple_pos):
             self.score += 1
             self.add_body()
-
-            max_val = int(self.screen_size / 20)
-            ran_pos_x = random.randint(0, max_val) * 20
-            ran_pos_y = random.randint(0, max_val) * 20
-
-            if ran_pos_x == self.screen_size:
-                ran_pos_x = self.screen_size - 20
-            if ran_pos_y == self.screen_size:
-                ran_pos_y = self.screen_size - 20
-
-            self.apple_pos = [ran_pos_x, ran_pos_y]
+            self.generate_apple()
 
     # check body collision
     def body_collision(self):
@@ -177,5 +179,5 @@ class Snake():
 if __name__ == '__main__':
     with open('pos.txt', 'w', encoding='utf-8') as f:
         pass
-    game_instance = Snake(screen_size=400, move_delay=100, frame=60)
+    game_instance = Snake(move_delay=100, frame=60)
     game_instance.startgame()
