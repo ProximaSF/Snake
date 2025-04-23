@@ -171,7 +171,7 @@ class Snake():
             pygame.display.flip()
             self.update_head_pos()
             self.eat_apple()
-            self.body_collision()
+            self.body_collision()d
             self.snake()
         pygame.quit()
         print(f"SCORE: {self.score}")
